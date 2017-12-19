@@ -24,7 +24,7 @@ defmodule OpenGraphExtendedTest do
   test "parses a remote youtube URL " do
     {:ok, og} = OpenGraphExtended.fetch("https://www.youtube.com/watch?v=19wToRIiYWI")
 
-    assert og.title == "«Ouvrez les guillemets», par Usul: la presse et moi - YouTube"
+    assert og.title == "«Ouvrez les guillemets», par Usul: la presse et moi"
     assert og.description == "Après avoir humé « L&#39;air de la campagne » lors des élections présidentielle et législatives, Usul rempile avec sa nouvelle chronique politique « Ouvrez les g..."
     assert og.image == "https://i.ytimg.com/vi/19wToRIiYWI/maxresdefault.jpg"
     assert og.site_name == "YouTube"
