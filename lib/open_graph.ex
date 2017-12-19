@@ -15,7 +15,12 @@ defmodule OpenGraph do
 
   @metatag_regex ~r/<\s*meta\s(?=[^>]*?\bproperty\s*=\s*(?|"\s*([^"]*?)\s*"|'\s*([^']*?)\s*'|([^"'>]*?)(?=\s*\/?\s*>|\s\w+\s*=)))[^>]*?\bcontent\s*=\s*(?|"\s*([^"]*?)\s*"|'\s*([^']*?)\s*'|([^"'>]*?)(?=\s*\/?\s*>|\s\w+\s*=))[^>]*>/
 
-  defstruct [:title, :type, :image, :url, :description, :site_name]
+  defstruct [:title, :type, :image, :url, # Basic fields
+    :description, :audio, :determiner, :locale, :site_name, :video, # Optional fields
+    String.to_atom("image:secure_url"), String.to_atom("image:type"), String.to_atom("image:width"), String.to_atom("image:height"), String.to_atom("image:alt"), # Image fields
+    String.to_atom("video:secure_url"), String.to_atom("video:type"), String.to_atom("video:width"), String.to_atom("video:height"), String.to_atom("video:alt"), # Video fields
+    String.to_atom("audio:secure_url"), String.to_atom("audio:type"), # Audio fields
+  ]
 
   @doc """
   Fetches the raw HTML for the given website URL.
