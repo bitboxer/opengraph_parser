@@ -4,7 +4,7 @@ defmodule OpenGraph.Mixfile do
   def project do
     [
       app: :open_graph,
-      version: "0.0.2",
+      version: "0.0.3",
       elixir: "~> 1.3",
       build_embedded: Mix.env == :prod,
       start_permanent: Mix.env == :prod,
@@ -39,15 +39,15 @@ defmodule OpenGraph.Mixfile do
 
   defp description do
     """
-    A Elixir wrapper for the Open Graph protocol.
+    A Elixir wrapper for the Open Graph protocol, which supports all properties from the OpenGraph Protocol
     """
   end
 
   defp package do
     [
-      maintainers: ["Andriel Nuernberg"],
+      maintainers: ["Thomas Citharel", "Andriel Nuernberg"],
       licenses: ["MIT"],
-      links: %{"GitHub" => "https://github.com/andrielfn/open_graph"},
+      links: %{"Framagit" => "https://framagit.org/tcit/open_graph"},
       files: ~w(lib mix.exs README.md LICENSE)
     ]
     end
