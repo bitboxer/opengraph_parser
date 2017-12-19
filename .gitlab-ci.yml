@@ -1,0 +1,12 @@
+image: elixir:1.4
+
+variables:
+  MIX_ENV: "test"
+
+before_script:
+  - mix local.hex --force
+  - mix deps.get --only test
+
+test:
+  script:
+    - mix test
