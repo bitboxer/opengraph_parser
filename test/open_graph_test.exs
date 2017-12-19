@@ -1,6 +1,6 @@
-defmodule OpenGraphTest do
+defmodule OpenGraphExtendedTest do
   use ExUnit.Case
-  doctest OpenGraph
+  doctest OpenGraphExtended
 
   setup do
     html = File.read!("#{File.cwd!}/test/fixtures/github.html")
@@ -8,7 +8,7 @@ defmodule OpenGraphTest do
   end
 
   test "parses with valid OpenGraph metatags in the given HTML", %{html: html} do
-    og = OpenGraph.parse(html)
+    og = OpenGraphExtended.parse(html)
 
     assert og.title == "Build software better, together"
     assert og.url == "https://github.com"
@@ -22,7 +22,7 @@ defmodule OpenGraphTest do
   end
 
   test "parses a remote youtube URL " do
-    {:ok, og} = OpenGraph.fetch("https://www.youtube.com/watch?v=19wToRIiYWI")
+    {:ok, og} = OpenGraphExtended.fetch("https://www.youtube.com/watch?v=19wToRIiYWI")
 
     assert og.title == "«Ouvrez les guillemets», par Usul: la presse et moi"
     assert og.description == "Après avoir humé « L&#39;air de la campagne » lors des élections présidentielle et législatives, Usul rempile avec sa nouvelle chronique politique « Ouvrez les g..."
@@ -36,7 +36,7 @@ defmodule OpenGraphTest do
   end
 
   test "parses with empty given HTML" do
-    og = OpenGraph.parse("")
+    og = OpenGraphExtended.parse("")
 
     assert og.title == nil
     assert og.url == nil

@@ -1,12 +1,12 @@
-defmodule OpenGraph do
+defmodule OpenGraphExtended do
   @moduledoc """
   Fetch and parse websites to extract Open Graph meta tags.
 
   The example above shows how to fetch the GitHub Open Graph rich objects.
 
   ```
-  OpenGraph.fetch("https://github.com")
-  %OpenGraph{description: "GitHub is where people build software. More than 15 million...",
+  OpenGraphExtended.fetch("https://github.com")
+  %OpenGraphExtended{description: "GitHub is where people build software. More than 15 million...",
   image: "https://assets-cdn.github.com/images/modules/open_graph/github-octocat.png",
   site_name: "GitHub", title: "Build software better, together", type: nil,
   url: "https://github.com"}
@@ -34,7 +34,7 @@ defmodule OpenGraph do
   def fetch(url) do
     case HTTPoison.get(url, [], [follow_redirect: true]) do
       {:ok, %HTTPoison.Response{status_code: 200, body: body}} ->
-        {:ok, OpenGraph.parse(body)}
+        {:ok, OpenGraphExtended.parse(body)}
       {:ok, %HTTPoison.Response{status_code: 404}} ->
         {:error, "Not found :("}
       {:error, %HTTPoison.Error{reason: reason}} ->
@@ -57,7 +57,7 @@ defmodule OpenGraph do
     |> Enum.into(%{}, fn [k, v] -> {k, v} end)
     |> Enum.map(fn {key, value} -> {String.to_atom(key), value} end)
 
-    struct(OpenGraph, map)
+    struct(OpenGraphExtended, map)
   end
 
   defp filter_og_metatags(["og:" <> _property, _content]), do: true

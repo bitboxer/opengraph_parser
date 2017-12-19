@@ -1,10 +1,10 @@
-defmodule OpenGraph.Mixfile do
+defmodule OpenGraphExtended.Mixfile do
   use Mix.Project
 
   def project do
     [
-      app: :open_graph,
-      version: "0.0.3",
+      app: :open_graph_extended,
+      version: "0.0.4",
       elixir: "~> 1.3",
       build_embedded: Mix.env == :prod,
       start_permanent: Mix.env == :prod,
@@ -40,6 +40,7 @@ defmodule OpenGraph.Mixfile do
   defp description do
     """
     A Elixir wrapper for the Open Graph protocol, which supports all properties from the OpenGraph Protocol
+    Originally based on Andriel Nuernberg's version at https://github.com/andrielfn/open_graph
     """
   end
 
