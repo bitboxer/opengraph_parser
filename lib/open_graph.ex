@@ -13,34 +13,25 @@ defmodule OpenGraphExtended do
   ```
   """
 
-  @metatag_regex ~r/<\s*meta\s(?=[^>]*?\bproperty\s*=\s*(?|"\s*([^"]*?)\s*"|'\s*([^']*?)\s*'|([^"'>]*?)(?=\s*\/?\s*>|\s\w+\s*=)))[^>]*?\bcontent\s*=\s*(?|"\s*([^"]*?)\s*"|'\s*([^']*?)\s*'|([^"'>]*?)(?=\s*\/?\s*>|\s\w+\s*=))[^>]*>/
-
   defstruct [:title, :type, :image, :url, # Basic fields
     :description, :audio, :determiner, :locale, :site_name, :video, # Optional fields
-    String.to_atom("image:secure_url"), String.to_atom("image:type"), String.to_atom("image:width"), String.to_atom("image:height"), String.to_atom("image:alt"), # Image fields
-    String.to_atom("video:secure_url"), String.to_atom("video:type"), String.to_atom("video:width"), String.to_atom("video:height"), String.to_atom("video:alt"), # Video fields
-    String.to_atom("audio:secure_url"), String.to_atom("audio:type"), # Audio fields
+    :"image:secure_url", :"image:type", :"image:width", :"image:height", :"image:alt", # Image fields
+    :"video:secure_url", :"video:type", :"video:width", :"video:height", :"video:alt", # Video fields
+    :"audio:secure_url", :"audio:type", # Audio fields
   ]
 
-  @doc """
-  Fetches the raw HTML for the given website URL.
+  @type t :: %OpenGraphExtended{title: String.t, type: String.t, url: String.t,
+                                description: String.t, audio: String.t, determiner: String.t,
+                                locale: String.t, site_name: String.t, video: String.t,
+                                "image:secure_url": String.t, "image:type": String.t,
+                                "image:width": String.t, "image:height": String.t,
+                                "image:alt": String.t, "video:secure_url": String.t,
+                                "video:type": String.t, "video:width": String.t,
+                                "video:height": String.t, "video:alt": String.t,
+                                "audio:secure_url": String.t, "audio:type": String.t
+                              }
 
-  Args:
-    * `url` - target URL as a binary string or char list
-
-  This functions returns `{:ok, %OpenGraph{...}}` if the request is successful,
-  `{:error, reason}` otherwise.
-  """
-  def fetch(url) do
-    case HTTPoison.get(url, [], [follow_redirect: true]) do
-      {:ok, %HTTPoison.Response{status_code: 200, body: body}} ->
-        {:ok, OpenGraphExtended.parse(body)}
-      {:ok, %HTTPoison.Response{status_code: 404}} ->
-        {:error, "Not found :("}
-      {:error, %HTTPoison.Error{reason: reason}} ->
-        {:error, reason}
-    end
-  end
+  @type html :: String.t | charlist()
 
   @doc """
   Parses the given HTML to extract the Open Graph objects.
@@ -50,20 +41,27 @@ defmodule OpenGraphExtended do
 
   This functions returns an OpenGraph struct.
   """
-  def parse(html) do
-    map = Regex.scan(@metatag_regex, html, capture: :all_but_first)
-    |> Enum.filter(&filter_og_metatags(&1))
-    |> Enum.map(&drop_og_prefix(&1))
-    |> Enum.into(%{}, fn [k, v] -> {k, v} end)
-    |> Enum.map(fn {key, value} -> {String.to_atom(key), value} end)
 
-    struct(OpenGraphExtended, map)
+  @spec parse(html) :: t()
+  def parse(html) when is_binary(html) or is_list(html) do
+    data = html
+          |> Floki.parse
+          |> Floki.find("meta")
+          |> Stream.filter(fn metatag -> match?({_, [{_property, _prop}, {_content, _cont}], _}, metatag) end)
+          |> Stream.filter(fn {_meta, [{_property, property}, {_content, _}], _} -> filter_og_metatags(property) end)
+          |> Stream.map(fn x -> format(x) end)
+          |> Enum.into(%{})
+
+    struct(OpenGraphExtended, data)
   end
 
-  defp filter_og_metatags(["og:" <> _property, _content]), do: true
+  defp format({"meta", [{"property", property}, {"content", content}], []}) do
+    new_prop = property |> drop_og_prefix |> String.to_atom
+    {new_prop, content}
+  end
+
+  defp filter_og_metatags("og:" <> _property), do: true
   defp filter_og_metatags(_), do: false
 
-  defp drop_og_prefix(["og:" <> property, content]) do
-    [property, content]
-  end
+  defp drop_og_prefix("og:" <> property), do: property
 end
