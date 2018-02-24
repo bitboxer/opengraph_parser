@@ -4,8 +4,8 @@ defmodule OpenGraphExtended.Mixfile do
   def project do
     [
       app: :open_graph_extended,
-      version: "0.0.4",
-      elixir: "~> 1.3",
+      version: "0.1.0",
+      elixir: "~> 1.5",
       build_embedded: Mix.env == :prod,
       start_permanent: Mix.env == :prod,
       deps: deps(),
@@ -18,7 +18,10 @@ defmodule OpenGraphExtended.Mixfile do
   #
   # Type "mix help compile.app" for more information
   def application do
-    [applications: [:httpoison, :logger]]
+    [
+      extra_applications: [:logger]
+    ]
+
   end
 
   # Dependencies can be Hex packages:
@@ -32,8 +35,8 @@ defmodule OpenGraphExtended.Mixfile do
   # Type "mix help deps" for more examples and options
   defp deps do
     [
-      {:httpoison, "~> 0.11"},
-      {:ex_doc, "~> 0.11", only: :dev}
+      {:ex_doc, "~> 0.18", only: :dev},
+      {:floki, "~> 0.20.0"}
     ]
   end
 
