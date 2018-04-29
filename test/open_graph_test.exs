@@ -6,7 +6,8 @@ defmodule OpenGraphExtendedTest do
     github  = File.read!("#{File.cwd!}/test/fixtures/github.html")
     youtube = File.read!("#{File.cwd!}/test/fixtures/youtube.html")
     imgur   = File.read!("#{File.cwd!}/test/fixtures/imgur.html")
-    {:ok, github: github, youtube: youtube, imgur: imgur}
+    ft   = File.read!("#{File.cwd!}/test/fixtures/ft.com.html")
+    {:ok, github: github, youtube: youtube, imgur: imgur, ft: ft}
   end
 
   test "Parses with valid OpenGraph metatags the Imgur HTML", %{imgur: imgur} do
@@ -57,5 +58,14 @@ defmodule OpenGraphExtendedTest do
     og = OpenGraphExtended.parse("")
 
     og == %OpenGraphExtended{}
+  end
+
+  test "Parses with wrong opengraph attribute", %{ft: ft} do
+    og = OpenGraphExtended.parse(ft)
+
+    assert og.locale == "en_GB"
+    assert og.site_name == "Financial Times"
+    assert og.type == "website"
+    assert og.image == nil
   end
 end

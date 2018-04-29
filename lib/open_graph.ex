@@ -42,14 +42,14 @@ defmodule OpenGraphExtended do
   This functions returns an OpenGraph struct.
   """
 
-  @spec parse(html) :: t()
+  @spec parse(String.t) :: t()
   def parse(html) when is_binary(html) or is_list(html) do
     data = html
           |> Floki.parse
           |> Floki.find("meta")
           |> Stream.filter(fn metatag -> match?({_, [{_property, _prop}, {_content, _cont}], _}, metatag) end)
           |> Stream.filter(fn {_meta, [{_property, property}, {_content, _}], _} -> filter_og_metatags(property) end)
-          |> Stream.map(fn x -> format(x) end)
+          |> Stream.flat_map(fn x -> format(x) end)
           |> Enum.into(%{})
 
     struct(OpenGraphExtended, data)
@@ -57,7 +57,11 @@ defmodule OpenGraphExtended do
 
   defp format({"meta", [{"property", property}, {"content", content}], []}) do
     new_prop = property |> drop_og_prefix |> String.to_atom
-    {new_prop, content}
+    [{new_prop, content}]
+  end
+
+  defp format(_) do
+    []
   end
 
   defp filter_og_metatags("og:" <> _property), do: true
