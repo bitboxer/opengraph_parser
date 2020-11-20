@@ -1,13 +1,13 @@
-defmodule OpenGraphExtended.Mixfile do
+defmodule OpenGraph.Mixfile do
   use Mix.Project
 
   def project do
     [
-      app: :open_graph_extended,
-      version: "0.1.1",
+      app: :opengraph_parser,
+      version: "0.2.0",
       elixir: "~> 1.5",
-      build_embedded: Mix.env == :prod,
-      start_permanent: Mix.env == :prod,
+      build_embedded: Mix.env() == :prod,
+      start_permanent: Mix.env() == :prod,
       deps: deps(),
       description: description(),
       package: package()
@@ -21,7 +21,6 @@ defmodule OpenGraphExtended.Mixfile do
     [
       extra_applications: [:logger]
     ]
-
   end
 
   # Dependencies can be Hex packages:
@@ -36,23 +35,24 @@ defmodule OpenGraphExtended.Mixfile do
   defp deps do
     [
       {:ex_doc, "~> 0.18", only: :dev},
-      {:floki, "~> 0.20.1"}
+      {:floki, "~> 0.29.0"}
     ]
   end
 
   defp description do
     """
     A Elixir wrapper for the Open Graph protocol, which supports all properties from the OpenGraph Protocol
-    Originally based on Andriel Nuernberg's version at https://github.com/andrielfn/open_graph
+    Originally based on Andriel Nuernberg's version at https://github.com/andrielfn/open_graph and it's fork
+    by Thomas Citharel at https://framagit.org/tcit/open_graph
     """
   end
 
   defp package do
     [
-      maintainers: ["Thomas Citharel", "Andriel Nuernberg"],
+      maintainers: ["Bodo Tasche", "Thomas Citharel", "Andriel Nuernberg"],
       licenses: ["MIT"],
-      links: %{"Framagit" => "https://framagit.org/tcit/open_graph"},
+      links: %{"github" => "https://github.com/bitboxer/opengraph_parser"},
       files: ~w(lib mix.exs README.md LICENSE)
     ]
-    end
+  end
 end
