@@ -40,7 +40,12 @@ defmodule OpenGraph do
     :"video:alt",
     # Audio fields
     :"audio:secure_url",
-    :"audio:type"
+    :"audio:type",
+    # Book fields
+    :"book:author",
+    :"book:isbn",
+    :"book:release_date",
+    :"book:tag"
   ]
 
   @type t :: %OpenGraph{
@@ -64,7 +69,11 @@ defmodule OpenGraph do
           "video:height": String.t(),
           "video:alt": String.t(),
           "audio:secure_url": String.t(),
-          "audio:type": String.t()
+          "audio:type": String.t(),
+          "book:author": list(String.t()),
+          "book:isbn": String.t(),
+          "book:release_date": String.t(),
+          "book:tag": list(String.t())
         }
 
   @type html :: String.t() | charlist()
@@ -92,7 +101,14 @@ defmodule OpenGraph do
         filter_og_metatags(property)
       end)
       |> Stream.flat_map(fn x -> format(x) end)
-      |> Enum.into(%{})
+      |> Enum.reduce(%{}, fn {key, value}, acc ->
+        if Enum.member?([:"book:tag", :"book:author"], key) do
+          array = Map.get(acc, key, [])
+          Map.merge(acc, %{key => Enum.concat(array, [value])})
+        else
+          Map.merge(acc, %{key => value})
+        end
+      end)
 
     struct(OpenGraph, data)
   end
@@ -107,7 +123,9 @@ defmodule OpenGraph do
   end
 
   defp filter_og_metatags("og:" <> _property), do: true
+  defp filter_og_metatags("book:" <> _property), do: true
   defp filter_og_metatags(_), do: false
 
   defp drop_og_prefix("og:" <> property), do: property
+  defp drop_og_prefix(property), do: property
 end

@@ -7,7 +7,8 @@ defmodule OpenGraphTest do
     youtube = File.read!("#{File.cwd!()}/test/fixtures/youtube.html")
     imgur = File.read!("#{File.cwd!()}/test/fixtures/imgur.html")
     ft = File.read!("#{File.cwd!()}/test/fixtures/ft.com.html")
-    {:ok, github: github, youtube: youtube, imgur: imgur, ft: ft}
+    book = File.read!("#{File.cwd!()}/test/fixtures/book.html")
+    {:ok, github: github, youtube: youtube, imgur: imgur, ft: ft, book: book}
   end
 
   test "Parses with valid OpenGraph metatags the Imgur HTML", %{imgur: imgur} do
@@ -73,5 +74,24 @@ defmodule OpenGraphTest do
     assert og.site_name == "Financial Times"
     assert og.type == "website"
     assert og.image == nil
+  end
+
+  test "Parses a book", %{book: book} do
+    og = OpenGraph.parse(book)
+
+    assert og.locale == "en_US"
+    assert og.title == "Steve Jobs"
+    assert og.site_name == "Open Graph protocol examples"
+    assert og.type == "book"
+    assert og.image == "http://examples.opengraphprotocol.us/media/images/50.png"
+    assert og."image:height" == "50"
+    assert og."image:width" == "50"
+    assert og."image:secure_url" == "https://d72cgtgi6hvvl.cloudfront.net/media/images/50.png"
+    assert og."image:type" == "image/png"
+    assert og.url == "http://examples.opengraphprotocol.us/book-isbn10.html"
+    assert og."book:author" == ["http://examples.opengraphprotocol.us/profile.html"]
+    assert og."book:isbn" == "1451648537"
+    assert og."book:release_date" == "2011-10-24"
+    assert og."book:tag" == ["Steve Jobs", "Apple", "Pixar"]
   end
 end
