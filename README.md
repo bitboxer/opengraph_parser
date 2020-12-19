@@ -14,7 +14,7 @@ The package can be installed as:
 
 ```elixir
 def deps do
-  [{:opengraph_parser, "~> 0.2.0"}]
+  [{:opengraph_parser, "~> 0.3.0"}]
 end
 ```
 
