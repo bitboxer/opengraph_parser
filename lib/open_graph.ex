@@ -101,6 +101,7 @@ defmodule OpenGraph do
         filter_og_metatags(property)
       end)
       |> Stream.flat_map(fn x -> format(x) end)
+      |> Stream.flat_map(fn x -> replace_books_with_book(x) end)
       |> Enum.reduce(%{}, fn {key, value}, acc ->
         if Enum.member?([:"book:tag", :"book:author"], key) do
           array = Map.get(acc, key, [])
@@ -122,8 +123,20 @@ defmodule OpenGraph do
     []
   end
 
+  defp replace_books_with_book({key, value}) do
+    key_string = Atom.to_string(key)
+
+    if String.starts_with?(key_string, "books:") do
+      new_key = key_string |> String.replace(~r/^books:/, "book:") |> String.to_atom()
+      [{new_key, value}]
+    else
+      [{key, value}]
+    end
+  end
+
   defp filter_og_metatags("og:" <> _property), do: true
   defp filter_og_metatags("book:" <> _property), do: true
+  defp filter_og_metatags("books:" <> _property), do: true
   defp filter_og_metatags(_), do: false
 
   defp drop_og_prefix("og:" <> property), do: property

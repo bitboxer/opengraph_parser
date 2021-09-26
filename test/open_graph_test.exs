@@ -94,4 +94,24 @@ defmodule OpenGraphTest do
     assert og."book:release_date" == "2011-10-24"
     assert og."book:tag" == ["Steve Jobs", "Apple", "Pixar"]
   end
+
+  test "Parses a book entry with a wrong prefix" do
+    book = File.read!("#{File.cwd!()}/test/fixtures/book_with_wrong_isbn_tag.html")
+    og = OpenGraph.parse(book)
+
+    assert og.locale == "en_US"
+    assert og.title == "Steve Jobs"
+    assert og.site_name == "Open Graph protocol examples"
+    assert og.type == "book"
+    assert og.image == "http://examples.opengraphprotocol.us/media/images/50.png"
+    assert og."image:height" == "50"
+    assert og."image:width" == "50"
+    assert og."image:secure_url" == "https://d72cgtgi6hvvl.cloudfront.net/media/images/50.png"
+    assert og."image:type" == "image/png"
+    assert og.url == "http://examples.opengraphprotocol.us/book-isbn10.html"
+    assert og."book:author" == ["http://examples.opengraphprotocol.us/profile.html"]
+    assert og."book:isbn" == "1451648537"
+    assert og."book:release_date" == "2011-10-24"
+    assert og."book:tag" == ["Steve Jobs", "Apple", "Pixar"]
+  end
 end
