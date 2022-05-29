@@ -114,4 +114,21 @@ defmodule OpenGraphTest do
     assert og."book:release_date" == "2011-10-24"
     assert og."book:tag" == ["Steve Jobs", "Apple", "Pixar"]
   end
+
+  test "Parse entries if meta has additional properties" do
+    book = File.read!("#{File.cwd!()}/test/fixtures/lego.html")
+    og = OpenGraph.parse(book)
+
+    assert og.url == "https://www.lego.com/de-de/product/death-star-trash-compactor-diorama-75339"
+    assert og.type == "product"
+
+    assert og.title ==
+             "Müllpresse im Todesstern™ – Diorama 75339 | Star Wars™ | Offiziellen LEGO® Shop DE "
+
+    assert og.description ==
+             "Bilde eine spannende Szene aus der Star Wars™ Saga in bester LEGO® Art nach"
+
+    assert og.image ==
+             "https://www.lego.com/cdn/cs/set/assets/bltd7931f1182bc364c/75339.png?fit=bounds&format=png&width=1500&height=1500&dpr=1"
+  end
 end

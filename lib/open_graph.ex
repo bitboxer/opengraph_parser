@@ -47,7 +47,7 @@ defmodule OpenGraph do
     :"book:release_date",
     :"book:tag",
     :"price:amount",
-    :"price:currency",
+    :"price:currency"
   ]
 
   @type t :: %OpenGraph{
@@ -77,7 +77,7 @@ defmodule OpenGraph do
           "book:release_date": String.t() | nil,
           "book:tag": list(String.t()) | nil,
           "price:amount": String.t() | nil,
-          "price:currency": String.t() | nil,
+          "price:currency": String.t() | nil
         }
 
   @type html :: String.t() | charlist()
@@ -95,46 +95,50 @@ defmodule OpenGraph do
   def parse(html) when is_binary(html) or is_list(html) do
     {:ok, document} = Floki.parse_document(html)
 
+    allowed_keys = get_allowed_keys()
+
     data =
       document
       |> Floki.find("meta")
       |> Stream.filter(fn metatag ->
-        match?({_, [{_property, _prop}, {_content, _cont}], _}, metatag)
+        Floki.attribute(metatag, "property") != nil
       end)
-      |> Stream.filter(fn {_meta, [{_property, property}, {_content, _}], _} ->
+      |> Stream.filter(fn metatag ->
+        property = Floki.attribute(metatag, "property") |> List.first()
         filter_og_metatags(property)
       end)
       |> Stream.flat_map(fn x -> format(x) end)
       |> Stream.flat_map(fn x -> replace_books_with_book(x) end)
       |> Enum.reduce(%{}, fn {key, value}, acc ->
-        if Enum.member?([:"book:tag", :"book:author"], key) do
+        if Enum.member?(["book:tag", "book:author"], key) do
           array = Map.get(acc, key, [])
           Map.merge(acc, %{key => Enum.concat(array, [value])})
         else
           Map.merge(acc, %{key => value})
         end
       end)
+      |> Enum.filter(fn {key, value} ->
+        value != nil && Enum.member?(allowed_keys, key)
+      end)
+      |> Enum.map(fn {key, value} ->
+        {String.to_atom(key), value}
+      end)
 
     struct(OpenGraph, data)
   end
 
-  defp format({"meta", [{"property", property}, {"content", content}], []}) do
-    new_prop = property |> drop_og_prefix |> String.to_atom()
-    [{new_prop, content}]
+  defp format(metatag) do
+    property = Floki.attribute(metatag, "property") |> List.first() |> drop_og_prefix()
+    content = Floki.attribute(metatag, "content") |> List.first()
+    [{property, content}]
   end
 
-  defp format(_) do
-    []
-  end
-
-  defp replace_books_with_book({key, value}) do
-    key_string = Atom.to_string(key)
-
+  defp replace_books_with_book({key_string, value}) do
     if String.starts_with?(key_string, "books:") do
-      new_key = key_string |> String.replace(~r/^books:/, "book:") |> String.to_atom()
+      new_key = key_string |> String.replace(~r/^books:/, "book:")
       [{new_key, value}]
     else
-      [{key, value}]
+      [{key_string, value}]
     end
   end
 
@@ -145,4 +149,10 @@ defmodule OpenGraph do
 
   defp drop_og_prefix("og:" <> property), do: property
   defp drop_og_prefix(property), do: property
+
+  defp get_allowed_keys do
+    Map.keys(OpenGraph.__struct__())
+    |> Enum.map(&Atom.to_string(&1))
+    |> Enum.filter(fn x -> x !== "__struct__" end)
+  end
 end
