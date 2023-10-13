@@ -74,6 +74,8 @@ defmodule OpenGraphTest do
     assert og.site_name == "Financial Times"
     assert og.type == "website"
     assert og.image == nil
+    assert og."product:price:amount" == "769"
+    assert og."product:price:currency" == "769"
   end
 
   test "Parses a book", %{book: book} do

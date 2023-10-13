@@ -149,6 +149,7 @@ defmodule OpenGraph do
   defp filter_og_metatags("og:" <> _property), do: true
   defp filter_og_metatags("book:" <> _property), do: true
   defp filter_og_metatags("books:" <> _property), do: true
+  defp filter_og_metatags("product:" <> _property), do: true
   defp filter_og_metatags(_), do: false
 
   defp drop_og_prefix("og:" <> property), do: property
