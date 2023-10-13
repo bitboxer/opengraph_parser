@@ -47,7 +47,9 @@ defmodule OpenGraph do
     :"book:release_date",
     :"book:tag",
     :"price:amount",
-    :"price:currency"
+    :"price:currency",
+    :"product:price:amount",
+    :"product:price:currency"
   ]
 
   @type t :: %OpenGraph{
@@ -77,7 +79,9 @@ defmodule OpenGraph do
           "book:release_date": String.t() | nil,
           "book:tag": list(String.t()) | nil,
           "price:amount": String.t() | nil,
-          "price:currency": String.t() | nil
+          "price:currency": String.t() | nil,
+          "product:price:amount": String.t() | nil,
+          "product:price:currency": String.t() | nil
         }
 
   @type html :: String.t() | charlist()
