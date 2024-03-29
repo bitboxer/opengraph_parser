@@ -4,7 +4,7 @@ defmodule OpenGraph.Mixfile do
   def project do
     [
       app: :opengraph_parser,
-      version: "0.4.4",
+      version: "0.4.5",
       elixir: "~> 1.9",
       build_embedded: Mix.env() == :prod,
       start_permanent: Mix.env() == :prod,
@@ -34,9 +34,9 @@ defmodule OpenGraph.Mixfile do
   # Type "mix help deps" for more examples and options
   defp deps do
     [
-      {:floki, "~> 0.35.2"},
-      {:ex_doc, "~> 0.18", only: :dev},
-      {:credo, "~> 1.5", only: :dev}
+      {:floki, "~> 0.36.1"},
+      {:ex_doc, "~> 0.31.2", only: :dev},
+      {:credo, "~> 1.7.5", only: :dev}
     ]
   end
 
