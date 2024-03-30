@@ -1,11 +1,18 @@
 defmodule OpenGraph do
   @moduledoc """
-  Fetch and parse websites to extract Open Graph meta tags.
+  Parse websites to extract Open Graph meta tags.
 
   The example above shows how to fetch the GitHub Open Graph rich objects.
 
   ```
-  OpenGraph.fetch("https://github.com")
+  Mix.install([
+    {:opengraph_parser, "~> 0.4.4"},
+    {:req, "~> 0.4.14"}
+  ])
+
+  Req.get!("https://github.com").body
+  |> OpenGraph.parse(html)
+
   %OpenGraph{description: "GitHub is where people build software. More than 15 million...",
   image: "https://assets-cdn.github.com/images/modules/open_graph/github-octocat.png",
   site_name: "GitHub", title: "Build software better, together", type: nil,
