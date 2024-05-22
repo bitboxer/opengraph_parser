@@ -1,6 +1,6 @@
 # OpenGraph
 
-[![CircleCI](https://circleci.com/gh/bitboxer/opengraph_parser.svg?style=svg&circle-token=5b8a03c6de247de40f9fca5a8b2f5fbb267c2683)](https://circleci.com/gh/bitboxer/opengraph_parser)
+[![CircleCI](https://circleci.com/gh/bitboxer/opengraph_parser.svg?style=svg)](https://circleci.com/gh/bitboxer/opengraph_parser)
 
 A Elixir wrapper for the [Open Graph protocol](http://ogp.me). This is a fork of
 [open_graph_extended](https://framagit.org/tcit/open_graph). The main goal is to
