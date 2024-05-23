@@ -1,6 +1,8 @@
 # OpenGraph
 
 [![CircleCI](https://circleci.com/gh/bitboxer/opengraph_parser.svg?style=svg)](https://circleci.com/gh/bitboxer/opengraph_parser)
+[![Hex.pm version](https://img.shields.io/hexpm/v/opengraph_parser.svg)](https://hex.pm/packages/opengraph_parser)
+[![Hex.pm downloads](https://img.shields.io/hexpm/dt/opengraph_parser.svg)](https://hex.pm/packages/opengraph_parser)
 
 A Elixir wrapper for the [Open Graph protocol](http://ogp.me). This is a fork of
 [open_graph_extended](https://framagit.org/tcit/open_graph). The main goal is to
