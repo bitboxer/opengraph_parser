@@ -35,7 +35,7 @@ defmodule OpenGraph.Mixfile do
   defp deps do
     [
       {:floki, "~> 0.36.1"},
-      {:ex_doc, "~> 0.33.0", only: :dev},
+      {:ex_doc, "~> 0.34.0", only: :dev},
       {:credo, "~> 1.7.5", only: :dev}
     ]
   end
