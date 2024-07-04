@@ -56,7 +56,8 @@ defmodule OpenGraph do
     :"price:amount",
     :"price:currency",
     :"product:price:amount",
-    :"product:price:currency"
+    :"product:price:currency",
+    :"fediverse:creator"
   ]
 
   @type t :: %OpenGraph{
@@ -88,7 +89,8 @@ defmodule OpenGraph do
           "price:amount": String.t() | nil,
           "price:currency": String.t() | nil,
           "product:price:amount": String.t() | nil,
-          "product:price:currency": String.t() | nil
+          "product:price:currency": String.t() | nil,
+          "fediverse:creator": String.t() | nil
         }
 
   @type html :: String.t() | charlist()
@@ -106,40 +108,68 @@ defmodule OpenGraph do
   def parse(html) when is_binary(html) or is_list(html) do
     {:ok, document} = Floki.parse_document(html)
 
-    allowed_keys = get_allowed_keys()
+    opengraph_tags = find_opengraph_tags(document)
+    other_meta_tags = find_other_tags(document)
 
-    data =
-      document
-      |> Floki.find("meta")
-      |> Stream.filter(fn metatag ->
-        Floki.attribute(metatag, "property") != nil
-      end)
-      |> Stream.filter(fn metatag ->
-        property = Floki.attribute(metatag, "property") |> List.first()
-        filter_og_metatags(property)
-      end)
-      |> Stream.flat_map(fn x -> format(x) end)
-      |> Stream.flat_map(fn x -> replace_books_with_book(x) end)
-      |> Enum.reduce(%{}, fn {key, value}, acc ->
-        if Enum.member?(["book:tag", "book:author"], key) do
-          array = Map.get(acc, key, [])
-          Map.merge(acc, %{key => Enum.concat(array, [value])})
-        else
-          Map.merge(acc, %{key => value})
-        end
-      end)
-      |> Enum.filter(fn {key, value} ->
-        value != nil && Enum.member?(allowed_keys, key)
-      end)
-      |> Enum.map(fn {key, value} ->
-        {String.to_atom(key), value}
-      end)
-
-    struct(OpenGraph, data)
+    struct(OpenGraph, opengraph_tags ++ other_meta_tags)
   end
 
-  defp format(metatag) do
-    property = Floki.attribute(metatag, "property") |> List.first() |> drop_og_prefix()
+  defp find_opengraph_tags(document) do
+    allowed_keys = get_allowed_keys()
+
+    document
+    |> Floki.find("meta")
+    |> Enum.filter(fn metatag ->
+      if Floki.attribute(metatag, "property") != nil do
+        property = Floki.attribute(metatag, "property") |> List.first()
+        filter_og_metatags(property)
+      else
+        false
+      end
+    end)
+    |> Enum.flat_map(fn x -> format(x, "property") end)
+    |> Enum.flat_map(fn x -> replace_books_with_book(x) end)
+    |> Enum.reduce(%{}, fn {key, value}, acc ->
+      if Enum.member?(["book:tag", "book:author"], key) do
+        array = Map.get(acc, key, [])
+        Map.merge(acc, %{key => Enum.concat(array, [value])})
+      else
+        Map.merge(acc, %{key => value})
+      end
+    end)
+    |> Enum.filter(fn {key, value} ->
+      value != nil && Enum.member?(allowed_keys, key)
+    end)
+    |> Enum.map(fn {key, value} ->
+      {String.to_atom(key), value}
+    end)
+  end
+
+  def find_other_tags(document) do
+    allowed_keys = get_allowed_keys()
+
+    document
+    |> Floki.find("meta")
+    |> Enum.filter(fn metatag ->
+      if Floki.attribute(metatag, "name") != nil do
+        name = Floki.attribute(metatag, "name") |> List.first()
+        filter_name_metatags(name)
+      else
+        false
+      end
+    end)
+    |> Enum.flat_map(fn x -> format(x, "name") end)
+    |> Enum.filter(fn {key, value} ->
+      value != nil && Enum.member?(allowed_keys, key)
+    end)
+    |> Enum.map(fn {key, value} ->
+      {String.to_atom(key), value}
+    end)
+  end
+
+  defp format(metatag, key) do
+    property = Floki.attribute(metatag, key) |> List.first() |> drop_og_prefix()
+
     content = Floki.attribute(metatag, "content") |> List.first()
     [{property, content}]
   end
@@ -158,6 +188,9 @@ defmodule OpenGraph do
   defp filter_og_metatags("books:" <> _property), do: true
   defp filter_og_metatags("product:" <> _property), do: true
   defp filter_og_metatags(_), do: false
+
+  defp filter_name_metatags("fediverse:creator"), do: true
+  defp filter_name_metatags(_), do: false
 
   defp drop_og_prefix("og:" <> property), do: property
   defp drop_og_prefix(property), do: property
