@@ -133,4 +133,28 @@ defmodule OpenGraphTest do
     assert og.image ==
              "https://www.lego.com/cdn/cs/set/assets/bltd7931f1182bc364c/75339.png?fit=bounds&format=png&width=1500&height=1500&dpr=1"
   end
+
+  test "Adds fediverse creator property" do
+    og =
+      OpenGraph.parse("""
+      <!DOCTYPE html>
+      <html>
+        <head>
+          <meta property=\"og:title\" content=\"Some title\">
+          <meta name=\"fediverse:creator\" content=\"@Gargron@mastodon.social\" />
+        </head>
+        <body><h1>Some title</h1></body>
+      </html>
+      """)
+
+    assert og == %OpenGraph{
+             description: nil,
+             image: nil,
+             site_name: nil,
+             title: "Some title",
+             type: nil,
+             url: nil,
+             "fediverse:creator": "@Gargron@mastodon.social"
+           }
+  end
 end
