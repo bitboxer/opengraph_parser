@@ -16,3 +16,6 @@ erl_crash.dump
 # Also ignore archive artifacts (built via "mix archive.build").
 *.ez
 /opengraph_extended.iml
+
+# Ignore mix task cache
+.mix_tasks
