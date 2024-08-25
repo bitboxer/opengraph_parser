@@ -93,8 +93,6 @@ defmodule OpenGraph do
           "fediverse:creator": String.t() | nil
         }
 
-  @type html :: String.t() | charlist()
-
   @doc """
   Parses the given HTML to extract the Open Graph objects.
 
@@ -145,7 +143,7 @@ defmodule OpenGraph do
     end)
   end
 
-  def find_other_tags(document) do
+  defp find_other_tags(document) do
     allowed_keys = get_allowed_keys()
 
     document

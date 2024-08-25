@@ -4,13 +4,17 @@ defmodule OpenGraph.Mixfile do
   def project do
     [
       app: :opengraph_parser,
-      version: "0.5.0",
+      version: "0.6.0",
       elixir: "~> 1.9",
       build_embedded: Mix.env() == :prod,
       start_permanent: Mix.env() == :prod,
       deps: deps(),
       description: description(),
-      package: package()
+      package: package(),
+      docs: [
+        main: "readme",
+        extras: ["README.md"]
+      ]
     ]
   end
 
@@ -36,7 +40,9 @@ defmodule OpenGraph.Mixfile do
     [
       {:floki, "~> 0.36.1"},
       {:ex_doc, "~> 0.34.0", only: :dev},
-      {:credo, "~> 1.7.5", only: :dev}
+      {:credo, "~> 1.7.5", only: :dev},
+      {:ex_check, "~> 0.16.0", only: :dev},
+      {:dialyxir, ">= 0.0.0", only: [:dev], runtime: false}
     ]
   end
 
