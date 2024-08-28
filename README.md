@@ -1,6 +1,6 @@
 # OpenGraph
 
-[![CircleCI](https://circleci.com/gh/bitboxer/opengraph_parser.svg?style=svg)](https://circleci.com/gh/bitboxer/opengraph_parser)
+[![Build Status](https://github.com/bitboxer/opengraph_parser/actions/workflows/elixir.yml/badge.svg?branch=main)](https://github.com/bitboxer/opengraph_parser/actions/workflows/elixir.yml)
 [![Hex.pm version](https://img.shields.io/hexpm/v/opengraph_parser.svg)](https://hex.pm/packages/opengraph_parser)
 [![Hex.pm downloads](https://img.shields.io/hexpm/dt/opengraph_parser.svg)](https://hex.pm/packages/opengraph_parser)
 
