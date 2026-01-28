@@ -39,7 +39,7 @@ defmodule OpenGraph.Mixfile do
   defp deps do
     [
       {:floki, "~> 0.38.0"},
-      {:ex_doc, "~> 0.39.1", only: :dev},
+      {:ex_doc, "~> 0.40.0", only: :dev},
       {:credo, "~> 1.7.5", only: :dev},
       {:ex_check, "~> 0.16.0", only: :dev},
       {:dialyxir, ">= 0.0.0", only: [:dev], runtime: false}
