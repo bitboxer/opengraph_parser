@@ -27,7 +27,7 @@ jobs:
           elixir-version: "1.15.2"
           otp-version: "26.0"
       - name: Restore dependencies cache
-        uses: actions/cache@6f8efc29b200d32929f49075959781ed54ec270c # v3.5.0
+        uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5.0.5
         with:
           path: deps
           key: ${{ runner.os }}-mix-${{ hashFiles('**/mix.lock') }}
@@ -37,7 +37,7 @@ jobs:
         run: mix deps.get
 
       - name: Retrieve PLT Cache
-        uses: actions/cache@6f8efc29b200d32929f49075959781ed54ec270c # v3.5.0
+        uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5.0.5
         id: plt-cache
         with:
           path: priv/plts
